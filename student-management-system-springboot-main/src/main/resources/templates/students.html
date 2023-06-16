@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Student Management System</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+
+  <!-- Toggler/collapsibe Button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Navbar links -->
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/students}">Student Management</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/teachers}">Teacher Management</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+	<div class ="container">
+		<div class = "row">
+			<h1> List Students </h1>
+		</div>
+		
+		<div class = "row">
+			<div class = "col-lg-3">
+				<a th:href = "@{/students/new}" class = "btn btn-primary btn-sm mb-3"> Add Student</a>
+			</div>
+		</div>
+
+		<h2>Search by Name:</h2>
+		<input type="text" id="searchInput" onkeyup="searchByName()" placeholder="Enter Name...">
+
+		<table class = "table table-striped table-bordered">
+			<thead class = "table-dark">
+				<tr>
+					<th onclick="sortTable(0, true)">Student First Name</th>
+					<th onclick="sortTable(1, true)">Student Last Name</th>
+					<th onclick="sortTable(2, true)">Student Email</th>
+					<th> Actions </th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				<tr th:each = "student: ${students}">
+					<td th:text = "${student.firstName}"></td>
+					<td th:text = "${student.lastName}"></td>
+					<td th:text = "${student.email}"></td>
+					<td>
+						<a th:href = "@{/students/edit/{id}(id=${student.id})}"
+						 class = "btn btn-primary">Update</a>
+						
+						<a th:href = "@{/students/{id}(id=${student.id})}"
+						 class = "btn btn-danger">Delete</a>
+						 
+					</td>
+				</tr>
+			</tbody>
+		
+		</table>
+		
+	</div>
+<script>
+	function searchByName() {
+
+		var input = document.getElementById("searchInput").value.toLowerCase();
+
+
+		var rows = document.getElementsByTagName("tr");
+
+
+		for (var i = 1; i < rows.length; i++) {
+			var firstName = rows[i].getElementsByTagName("td")[0].textContent.toLowerCase();
+			var lastName = rows[i].getElementsByTagName("td")[1].textContent.toLowerCase();
+
+			if (firstName.includes(input) || lastName.includes(input)) {
+				rows[i].style.display = "";
+			} else {
+				rows[i].style.display = "none";
+			}
+		}
+	}
+	function sortTable(columnIndex, ascending) {
+		var table, rows, switching, i, x, y, shouldSwitch;
+		table = document.getElementsByTagName("table")[0];
+		switching = true;
+
+		while (switching) {
+			switching = false;
+			rows = table.getElementsByTagName("tr");
+
+			for (i = 1; i < (rows.length - 1); i++) {
+				shouldSwitch = false;
+
+				x = rows[i].getElementsByTagName("td")[columnIndex];
+				y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+				// ?????????? ???????? ????? ? ??????????? ?? ???? ?????? (????? ??? ??????)
+				if (ascending) {
+					if (isNaN(parseFloat(x.textContent))) {
+						if (x.textContent.toLowerCase() > y.textContent.toLowerCase()) {
+							shouldSwitch = true;
+							break;
+						}
+					} else {
+						if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+							shouldSwitch = true;
+							break;
+						}
+					}
+				} else {
+					if (isNaN(parseFloat(x.textContent))) {
+						if (x.textContent.toLowerCase() < y.textContent.toLowerCase()) {
+							shouldSwitch = true;
+							break;
+						}
+					} else {
+						if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+							shouldSwitch = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (shouldSwitch) {
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
+			}
+		}
+	}
+</script>
+
+</body>
+</html>
